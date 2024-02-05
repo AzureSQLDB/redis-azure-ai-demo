@@ -6,7 +6,7 @@ create table [aidemo].[styles] (
     articleType     nvarchar(100) NOT NULL,
     baseColour      nvarchar(50) NOT NULL,
     season          nvarchar(50) NOT NULL,
-    year            int NOT NULL,
+    year            int,
     usage           nvarchar(100) NOT NULL,
     productDisplayName  nvarchar(2000) NOT NULL
 )
