@@ -1,0 +1,23 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/dotnet:7.0",
+  "features": {
+	  "ghcr.io/devcontainers/features/docker-in-docker:2": {
+		  "moby": true,
+		  "azureDnsAutoDetection": true,
+		  "installDockerBuildx": true,
+		  "version": "latest",
+		  "dockerDashComposeVersion": "v1"
+	  }
+	},
+  "customizations": {
+	  "vscode": {
+		  "extensions": [
+			  "ms-mssql.sql-database-projects-vscode",
+			  "ms-azuretools.vscode-azurefunctions",
+			  "ms-vscode.azure-account",
+			  "ms-azuretools.vscode-azureresourcegroups",
+			  "github.vscode-github-actions",
+		  ]
+	  }
+  }
+  }
