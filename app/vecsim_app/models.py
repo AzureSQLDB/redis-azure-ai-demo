@@ -21,3 +21,13 @@ class ProductMetadata(EmbeddedJsonModel):
 class Product(JsonModel):
     product_id: int = Field(index=True)
     product_metadata: ProductMetadata
+
+class User(JsonModel):
+    user_key: int = Field(index=True, alias='pk')
+    email: str = Field(index=True, full_text_search=True)
+    first_name: str = Field(index=True, full_text_search=True)
+    last_name: str = Field(index=True, full_text_search=True)
+    title: str = Field(index=True)
+    company: str = Field(index=True, full_text_search=True)
+    is_active: bool = Field(index=True)
+    is_superuser: bool = Field(index=True)
