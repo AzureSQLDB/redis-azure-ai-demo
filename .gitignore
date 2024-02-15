@@ -5,7 +5,6 @@ venv
 __pycache__
 node_modules
 .DS_Store
-images
 .ipynb_checkpoints
 product_metadata.json
 product_vectors.json
