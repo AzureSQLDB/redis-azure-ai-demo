@@ -39,12 +39,6 @@ REDIS_KEY=os.environ.get('REDIS_KEY')
 
 app = func.FunctionApp()
 
-client = AzureOpenAI(
-    api_key = "05c28289fa3d42daa7fa13439cb02f5e",  
-    api_version = "2024-02-15-preview",
-    azure_endpoint = "https://testwed.openai.azure.com"
-)
-
 # Resnet-18 to create image embeddings
 img2vec = Img2Vec(cuda=False)
 
