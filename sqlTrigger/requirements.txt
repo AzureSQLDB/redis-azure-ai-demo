@@ -6,3 +6,8 @@ azure-functions
 sentence_transformers
 openai
 tokenizers
+img2vec_pytorch
+pyodbc
+redis
+pandas
+python-dotenv
