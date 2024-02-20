@@ -1,5 +1,7 @@
 # SQL Trigger Binding for Redis Demo
 
+This SQL Trigger will work with the Redis Vector DB demo. It tracks updates to the styles table, creates enbedings, and inserts the JSON back into the Redis Vector DB.
+
 ## Prerequisits
 
 Run the following to prepare your environment for the trigger function
