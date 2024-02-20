@@ -4,6 +4,11 @@
 
 Run the following to prepare your environment for the trigger function
 
+### Install the following VS Code Extentions
+Python (ms-python.python)
+Azure Functions (ms-azuretools.vscode-azurefunctions)
+Jupyter (ms-toolsai.jupyter)
+
 ### Install the python libraries
 ```BASH
 pip install -r requirements.txt
