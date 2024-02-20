@@ -1,1 +1,46 @@
-Directions Here
+# SQL Trigger Binding for Redis Demo
+
+## Prerequisits
+
+Run the following to prepare your environment for the trigger function
+
+### Install the python libraries
+```BASH
+pip install -r requirements.txt
+```
+
+### Install functions core tools
+```BASH
+npm install -g azure-functions-core-tools@4
+```
+
+### Update the environments file (.env)
+You can use the template.env as a template. Copy and rename the file to .env and fill out the following entries:
+
+```BASH
+DB_SERVER = ''
+DB_NAME = ''
+DB_USERNAME = ''
+DB_PASSWORD = ''
+DB_LIMIT=100
+REDIS_HOST=''
+REDIS_PORT=''
+REDIS_PASSWORD=''
+REDIS_KEY=''
+```
+
+### Update the local.settings.json file with the database connection information
+Replace **SERVER_NAME**, **DB_NAME**, **USER**, **PASSWORD**, and change the **port number** if necessary.
+
+```JSON
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsFeatureFlags": "EnableWorkerIndexing",
+    "connection-string": "Server=tcp:SERVER_NAME.database.windows.net,1433;Initial Catalog=DB_NAME;Persist Security Info=False;User ID=USER;Password=PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  }
+}
+```
+
