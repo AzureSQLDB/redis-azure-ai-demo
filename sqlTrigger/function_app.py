@@ -13,9 +13,11 @@ import numpy as np
 from openai import AzureOpenAI
 from tokenizers import Tokenizer
 from sentence_transformers import SentenceTransformer
+
 # for creating image vector embeddings
 from PIL import Image
 from img2vec_pytorch import Img2Vec
+
 # for Redis
 import redis
 from redis.commands.search.field import (
