@@ -15,13 +15,9 @@ npm install -g azure-functions-core-tools@4
 ```
 
 ### Update the environments file (.env)
-You can use the template.env as a template. Copy and rename the file to .env and fill out the following entries:
+You can use the template.env as a template. Copy and rename the file to .env and fill out the following entries for the Azure Cache for Redis:
 
 ```BASH
-DB_SERVER = ''
-DB_NAME = ''
-DB_USERNAME = ''
-DB_PASSWORD = ''
 DB_LIMIT=100
 REDIS_HOST=''
 REDIS_PORT=''
