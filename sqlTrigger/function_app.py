@@ -80,7 +80,7 @@ def generate_image_vectors(products, image_base_path, batch_size=1000):
         #update the dictionary to be returned
         batch_dict= dict(zip(converted, vec_list))
         output_dict.update(batch_dict)
-        print(f"Processed {str(batch_size)} product images")
+        print(f"Processed {str(len(output_dict))} product images")
 
     return output_dict
 
