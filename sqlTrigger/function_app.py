@@ -241,7 +241,7 @@ def products_trigger(styles: str) -> None:
 
     #setup Redis for product cache and VSS
     
-    #vector_dim = len(vector_dict[1])
+    vector_dim = len(vector_dict[0])
     redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, decode_responses=True)
     create_redis_index(redis_client, image_dim, text_dim)
     push_redis_data(redis_client, image_vectors, text_vectors, metadata)
