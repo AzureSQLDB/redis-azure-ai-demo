@@ -10,3 +10,10 @@ create table [aidemo].[styles] (
     usage           nvarchar(100) NOT NULL,
     productDisplayName  nvarchar(2000) NOT NULL
 )
+
+ALTER DATABASE CURRENT
+SET CHANGE_TRACKING = ON
+(CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);
+
+ALTER TABLE [aidemo].[styles]
+ENABLE CHANGE_TRACKING;
