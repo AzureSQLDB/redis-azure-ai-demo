@@ -1,7 +1,8 @@
-fastapi
 httpx
 requests
 uvicorn
 aiofiles
 redis-om
 pandas
+fastapi<1.0.0
+pydantic>=1.2.0,<2.0.0
