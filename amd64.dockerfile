@@ -1,0 +1,40 @@
+
+# Stage 1: Build React app
+FROM --platform=$BUILDPLATFORM node:18.8-alpine AS ReactImage
+
+WORKDIR /app/gui
+
+ENV NODE_PATH=/app/gui/node_modules
+ENV PATH=$PATH:/app/gui/node_modules/.bin
+
+COPY ./gui/package.json ./
+RUN yarn install --no-optional
+
+ADD ./gui ./
+RUN yarn build
+
+# Stage 2: Build FastAPI application for Windows
+FROM --platform=windows/amd64 python:3.11.8-windowsservercore-ltsc2022 AS ApiImageWindows
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+RUN python3 -m pip install --upgrade pip setuptools wheel
+
+WORKDIR /app/
+COPY ./data/ ./data
+
+RUN mkdir -p /app/backend
+WORKDIR /app/backend
+
+COPY ./app/ .
+RUN pip install -e .
+
+# add static react files to fastapi image
+COPY --from=ReactImage /app/gui/build /app/backend/vecsim_app/templates/build
+
+LABEL org.opencontainers.image.source https://github.com/RedisVentures/redis-product-search
+
+WORKDIR /app/backend/vecsim_app
+
+CMD ["sh", "./entrypoint.sh"]
