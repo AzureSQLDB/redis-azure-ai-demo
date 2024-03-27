@@ -2,7 +2,6 @@
 import asyncio
 import json
 import numpy as np
-import redis.asyncio as redis
 import typing as t
 
 from vecsim_app import config
@@ -59,9 +58,7 @@ async def set_product_vectors(product_vectors, redis_conn, products_with_pk):
                 "text_vector": np.array(product["text_vector"], dtype=np.float32).tobytes()
         })
 
-async def load_all_data():
-    # TODO use redis-om connection
-    redis_conn = redis.from_url(config.REDIS_URL)
+async def load_all_data(redis_conn):
     if await redis_conn.dbsize() > 5000:
         print("Products already loaded")
     else:
@@ -82,6 +79,3 @@ async def load_all_data():
         else:
             await create_flat_index(redis_conn, len(products), prefix="product_vector:", distance_metric="L2")
         print("Search index created")
-
-if __name__ == "__main__":
-    asyncio.run(load_all_data())
