@@ -1,6 +1,4 @@
-
-# Stage 1: Build React app
-FROM --platform=$BUILDPLATFORM node:18.8-alpine AS ReactImage
+FROM amd64/node:18.8 AS ReactImage
 
 WORKDIR /app/gui
 
@@ -13,8 +11,7 @@ RUN yarn install --no-optional
 ADD ./gui ./
 RUN yarn build
 
-# Stage 2: Build FastAPI application for Windows
-FROM --platform=windows/amd64 python:3.11.8-windowsservercore-ltsc2022 AS ApiImageWindows
+FROM amd64/python:3.9-slim AS ApiImage
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
