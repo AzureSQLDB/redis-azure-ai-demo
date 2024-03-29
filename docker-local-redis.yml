@@ -11,7 +11,7 @@ services:
       - 6379:6379
       - 8001:8001
   backend:
-    image: ghcr.io/redisventures/redis-product-search:latest
+    image: redis-product-search:latest
     environment:
       DEPLOYMENT: "dev"
       REDIS_HOST: "redis-vector-db"
