@@ -1,6 +1,9 @@
 *.egg-info
 build
 venv
+.venv
+.vscode
+.idea
 .env
 __pycache__
 node_modules
