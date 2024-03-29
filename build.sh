@@ -1,1 +1,1 @@
-docker build -t redisventures/redis-product-search:latest .
+docker build -t redis-product-search:latest .
