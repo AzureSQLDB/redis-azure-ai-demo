@@ -59,7 +59,7 @@ async def set_product_vectors(product_vectors, redis_conn, products_with_pk):
         })
 
 async def load_all_data(redis_conn):
-    if await redis_conn.dbsize() > 5000:
+    if await redis_conn.dbsize() >= 1000:
         print("Products already loaded")
     else:
         print("Loading products into Vecsim App")

@@ -52,6 +52,7 @@ async def get_products(limit: int = 20, skip: int = 0, gender: str = "", categor
         expressions.append(Product.product_metadata.master_category == category)
     # Run query
     products = await Product.find(*expressions)\
+        .sort_by("product_id")\
         .copy(offset=skip, limit=limit)\
         .execute(exhaust_results=False)
     # Get total count
