@@ -39,6 +39,7 @@ REDIS_PORT=os.environ.get('REDIS_PORT')
 REDIS_PASSWORD=os.environ.get('REDIS_PASSWORD')
 REDIS_KEY=os.environ.get('REDIS_KEY')
 
+
 app = func.FunctionApp()
 
 # Resnet-18 to create image embeddings
@@ -138,70 +139,57 @@ def create_product_metadata(metadata_df):
                 "base_color": row["baseColour"],
                 "season": row["season"],
                 "year": row["year"],
-                "usage": row["usage"]
+                "usage": row["usage"],
+                "image_url": '',
+                "keywords": '',
+                "brand": '',
+                "age_group": ''
             }
         }
         products.append(product)
 
     return products
 
-def create_redis_index(redis_client, vector_dim, text_dim):
-    print("create index for product and vector data")
-    schema = (
-        TextField("$.product_id", no_stem=True, as_name="product_id"),
-        TextField("$.gender", no_stem=True, as_name="gender"),
-        NumericField("$.masterCategory", as_name="category"),
-        TagField("$.subCategory", as_name="sub"),
-        TextField("$.articleType", as_name="type"),
-        TextField("$.baseColor", as_name="color"),
-        TextField("$.season", as_name="season"),
-        NumericField("$.year", as_name="year"),
-        TextField("$.usage", as_name="usage"),
-        TextField("$.productDisplayName", as_name="name"),
-        VectorField(
-            "$.image_embeddings",
-            "HNSW",
-            {
-                "TYPE": "FLOAT32",
-                "DIM": vector_dim,
-                "DISTANCE_METRIC": "COSINE",
-            },
-            as_name="image_vectors",
-        ),
-        VectorField(
-            "$.text_embeddings",
-            "HNSW",
-            {
-                "TYPE": "FLOAT32",
-                "DIM": text_dim,
-                "DISTANCE_METRIC": "COSINE",
-            },
-            as_name="text_vectors",
-        ),
-    )
-    definition = IndexDefinition(prefix=[f"{{{REDIS_KEY}}}:"], index_type=IndexType.JSON)
-    
-    try:
-        res = redis_client.ft(f"idx:{REDIS_KEY}").create_index(
-            fields=schema, definition=definition
-        )
-    except:
-        print("index already exists")
-
 def push_redis_data(redis_client, image_vectors, text_vectors, metadata):
     print("push JSON data to Redis")
-    pipeline = redis_client.pipeline()
+    pipeline = redis_client.pipeline(transaction=False)
     index=0
     for index in range(len(metadata)):
-        redis_key = f"{{{REDIS_KEY}}}:{metadata[index]['product_id']:03}"
-        pipeline.json().set(redis_key, "$", metadata[index])
-        pipeline.json().set(redis_key, "$.image_embeddings", image_vectors[metadata[index]['product_id']].tolist())
-        pipeline.json().set(redis_key, "$.text_embeddings", text_vectors[metadata[index]['product_id']].tolist())
-        if index%50==0:
-            pipeline.execute()
+        # Get Product by id
+        query = Query(f"@product_id:[{metadata[index]['product_id']} {metadata[index]['product_id']}]")
+        product = redis_client.ft(f"{REDIS_KEY}").search(query)
+        if product:
+            id = product.docs[0].id
+            json_obj = json.loads(product.docs[0]['json'])
+            metadata[index]['product_metadata']['image_url'] = json_obj['product_metadata']['image_url']
+            
+            pipeline.json().set(id, "$", metadata[index])
+            if index%50==0:
+                pipeline.execute()
     pipeline.execute()
 
+def get_product_from_dict(product_dict, product_id):
+    return [value for value in product_dict.values() if value.get('product_id') == product_id]
 
+def set_product_vectors(product_vectors, redis_conn, products_with_pk):
+    # iterate through products data and save vectors hash model
+    for product in product_vectors:
+        product_id = product["product_id"]
+        product_pk = get_product_from_dict(products_with_pk, product_id)
+        key = f"product_vector:{str(product_id)}"
+        redis_conn.hset(
+            key,
+            mapping={
+                "product_id": product_id,
+
+                # Add tag fields to vectors for hybrid search
+                "gender": product_pk[0]["gender"],
+                "category": product_pk[0]["masterCategory"],
+
+                # add image and text vectors as blobs
+                "img_vector": np.array(product["img_vector"], dtype=np.float32).tobytes(),
+                "text_vector": np.array(product["text_vector"], dtype=np.float32).tobytes()
+        })
 
 
 # The function gets triggered when a change (Insert, Update, or Delete)
@@ -230,19 +218,11 @@ def products_trigger(styles: str) -> None:
     image_vectors = generate_image_vectors(df[:DB_LIMIT], data_path, DB_LIMIT)
     text_vectors = generate_text_vectors(df[:DB_LIMIT])
     vector_dict = combine_vector_dicts(text_vectors, image_vectors, df)
-    image_dim = [len(i) for i in image_vectors.values()][0]
-    text_dim = [len(i) for i in text_vectors.values()][0]
-
+   
     metadata = create_product_metadata(df[:DB_LIMIT])
-    #optional write to file system
-    write_product_metadata_json(metadata)
-    write_product_vector_json(vector_dict)
-
-
-    #setup Redis for product cache and VSS
     
-    vector_dim = len(vector_dict[0])
-    redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, decode_responses=True)
-    create_redis_index(redis_client, image_dim, text_dim)
+    #setup Redis for product cache and VSS
+    redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, ssl=True, decode_responses=True)
+    set_product_vectors(vector_dict, redis_client, df[:DB_LIMIT].to_dict(orient='index'))
     push_redis_data(redis_client, image_vectors, text_vectors, metadata)
 

@@ -60,6 +60,8 @@ app.include_router(
 # static image files
 app.mount("/data", StaticFiles(directory="data"), name="data")
 
+app.mount("/images", StaticFiles(directory="static/images"), name="static")
+
 ## mount the built GUI react files into the static dir to be served.
 current_file = Path(__file__)
 project_root = current_file.parent.resolve()
