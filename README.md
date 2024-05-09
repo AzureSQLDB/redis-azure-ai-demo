@@ -1,54 +1,86 @@
+# Redis Vector Search Demo Application using ACRE and Cache Prefetching from Azure SQL with Azure Functions
 
-<div align="center">
-    <a href="https://github.com/spartee/redis-vector-search"><img src="https://github.com/Spartee/redis-vector-search/blob/master/app/vecsim_app/data/redis-logo.png?raw=true" width="30%"><img></a>
-    <br />
-    <br />
-<div display="inline-block">
-    <a href="https://ecommerce.redisventures.com"><b>Hosted Demo</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://github.com/Spartee/redis-vector-search"><b>Code</b></a>&nbsp;&nbsp;&nbsp;
-    <a href="https://redis.io/docs/stack/search/reference/vectors/"><b>Redis VSS Documentation</b></a>&nbsp;&nbsp;&nbsp;
-  </div>
-    <br />
-    <br />
-</div>
+## Summary
 
-# Redis Vector Search Demo Application
+We based this project from our [Product Search Demo](<https://github.com/redis-developer/redis-product-search>) which showcase how to use Redis as a Vector Db. We modified the demo by adding a Cache Prefetching pattern from Azure SQL to ACRE using Azure Functions. The Azure Function uses a SQL Trigger that will trigger for any updates that happen in the table.
 
-This demo showcases the vector search similarity (VSS) capability within Redis Stack and Redis Enterprise.
-Through the RediSearch module, vector types and indexes can be added to Redis. This turns Redis into
-a highly performant vector database which can be used for all types of applications.
+## Features
 
-The following Redis Stack capabilities are available in this demo:
-   - **Vector Similarity Search**
-     - by image
-     - by text
-   - **Multiple vector indexing types**
-     - HNSW
-     - Flat (brute-force)
-   - **Hybrid Queries**
-     - Apply tags as pre-filter for vector search
+- Uses Azure Function to sync the updates in Azure SQL to Redis using a Prefetch caching pattern
+- Vector Similarity Search
+  - by image
+  - by text
+- Multiple vector indexing types
+  - HNSW
+  - Flat (brute-force)
+- Hybrid Queries
+  - Apply tags as pre-filter for vector search
 
-## Application
+## Architecture
 
-This app was built as a Single Page Application (SPA) with the following components:
 
-- **[Redis Stack](https://redis.io/docs/stack/)**: Vector database + JSON storage
-- **[FastAPI](https://fastapi.tiangolo.com/)** (Python 3.8)
-  - JWT authentication using [OAuth2 "password
-    flow"](https://fastapi.tiangolo.com/tutorial/security/simple-oauth2/) and
-    PyJWT
-- **[Pydantic](https://pydantic-docs.helpmanual.io/)** for schema and validation
-- **[React](https://reactjs.org/)** (with Typescript)
-- **[Redis OM](https://redis.io/docs/stack/get-started/tutorials/stack-python/)** for ORM
-- **[Docker Compose](https://docs.docker.com/compose/)** for development
-- **[MaterialUI](https://material-ui.com/)** for some UI elements
-- **[React-Bootstrap](https://react-bootstrap.github.io/)** for some UI elements
-- **[react-admin](https://github.com/marmelab/react-admin)** for the admin dashboard
-  - Using the same token based authentication as FastAPI backend (JWT)
-- **[Pytorch/Img2Vec](https://github.com/christiansafka/img2vec)** and **[Huggingface Sentence Transformers](https://huggingface.co/sentence-transformers)** for vector embedding creation
+## Prerequisites
 
-Some inspiration was taken from this [Cookiecutter project](https://github.com/Buuntu/fastapi-react)
-and turned into a SPA application instead of a separate front-end server approach.
+- VS Code or Visual Studio
+- Python 3.8
+- OSX or Windows
+- Azure SQL
+- Azure Cache for Redis Enterprise
+  - Configuration steps [here](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/quickstart-create-redis-enterprise)
+
+## Running the Solution
+
+### Step 1 - Create data to load into Redis
+
+The Jupyter notebook will create two json files with the product metadata and the product vectors. These files will be placed in the data folder. The application will load these files to ACRE and create the indexes automatically when the docker container starts.
+
+1. Run the Jupyter notebook located in data folder
+
+### Step 2 - Load Data to Azure SQL
+
+1. Run the create_aiuser.sql script located in the scripts folder
+2. Run the styles_table.sql script located in the scripts folder
+
+- This will also enable CDC on the database and the table
+
+3. Import the styles.csv data to the [aidemo].[styles] table using the import functionality of Azure Data Studio or through any other familiar options
+
+### Step 3 - Run the App
+
+1. Create docker image by running
+
+```sh
+docker build -t product-search-app . --no-cache
+```
+
+2. Export Redis Endpoint Environment Variables:
+
+```sh
+  $ export REDIS_HOST=your-redis-host
+  $ export REDIS_PORT=your-redis-port
+  $ export REDIS_PASSOWRD=your-redis-password
+```
+
+3. Run docker image by running
+
+```sh
+docker compose -f docker-cloud-redis.yml up
+```
+
+
+### Step 4 - Run the Azure Function
+
+1. Go to the sqlTrigger folder by running
+
+```sh
+cd sqlTrigger
+```
+
+2. Run the Azure Function
+
+```sh
+func start
+```
 
 ### Datasets
 
@@ -56,60 +88,3 @@ The dataset was taken from the the following Kaggle links.
 
 - [Large Dataset](https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-dataset)
 - [Smaller Dataset](https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-small)
-
-
-## Running the App
-Before running the app, install [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-
-
-
-#### Redis Cloud (recommended)
-
-1. [Get your Redis Cloud Database](https://app.redislabs.com/) (if needed).
-
-2. Export Redis Endpoint Environment Variables:
-    ```bash
-    $ export REDIS_HOST=your-redis-host
-    $ export REDIS_PORT=your-redis-port
-    $ export REDIS_PASSOWRD=your-redis-password
-    ```
-
-3. Run the App:
-    ```bash
-    $ docker compose -f docker-cloud-redis.yml up
-    ```
-
-> The benefit of this approach is that the db will persist beyond application runs. So you can make updates and re run the app without having to provision the dataset or create another search index.
-
-#### Redis Docker
-```bash
-$ docker compose -f docker-local-redis.yml up
-```
-
-### Customizing (optional)
-You can use the Jupyter Notebook in the `data/` directory to create product embeddings and product metadata JSON files. Both files will end up stored in the `data/` directory and used when creating your own container.
-
-Create your own containers using the `build.sh` script and then make sure to update the `.yml` file with the right image name.
-
-
-### Using a React development env
-It's typically easier to write front end code in an interactive environment, testing changes in realtime.
-
-1. Deploy the app using steps above.
-2. Install NPM packages (you may need to use `npm` to install `yarn`)
-    ```bash
-    $ cd gui/
-    $ yarn install --no-optional
-    ````
-4. Use `yarn` to serve the application from your machine
-    ```bash
-    $ yarn start
-    ```
-5. Navigate to `http://localhost:3000` in a browser.
-
-All changes to your local code will be reflected in your display in semi realtime.
-
-### Troubleshooting
-Sometimes you need to clear out some Docker cached artifacts. Run `docker system prune`, restart Docker Desktop, and try again.
-
-Open an issue here on GitHub and we will try to be responsive to these. Additionally, please consider [contributing](CONTRIBUTING.md).

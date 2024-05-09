@@ -48,9 +48,6 @@ img2vec = Img2Vec(cuda=False)
 # bert variant to create text embeddings
 model = SentenceTransformer('sentence-transformers/all-distilroberta-v1')
 
-#def generate_embeddings(text, model="text-embedding-ada-002"): # model = "deployment_name"
-#    return client.embeddings.create(input = [text], model=model).data[0].embedding
-
 ######################## Functions
 
 def get_batch(seq, size):
@@ -112,17 +109,6 @@ def combine_vector_dicts(txt_vectors, img_vectors, products):
         except KeyError:
             continue
     return product_vectors
-
-def write_product_vector_json(vector_dict):
-    product_vector_json = json.dumps(vector_dict)
-    with open("./product_vectors.json", "w") as f:
-        f.write(product_vector_json)
-
-def write_product_metadata_json(metadata):
-
-    products_json = json.dumps(metadata)
-    with open("./product_metadata.json", "w") as f:
-        f.write(products_json)
 
 def create_product_metadata(metadata_df):
     products = []
