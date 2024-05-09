@@ -5,7 +5,8 @@ GO
 
 # In DEMO DB
 
-create schema aidemo;
+CREATE SCHEMA aidemo;
+GO
 
 CREATE USER [aidemo] FOR LOGIN [aiuser] WITH DEFAULT_SCHEMA=[dbo]
 GO
