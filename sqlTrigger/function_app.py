@@ -38,6 +38,7 @@ REDIS_HOST=os.environ.get('REDIS_HOST')
 REDIS_PORT=os.environ.get('REDIS_PORT')
 REDIS_PASSWORD=os.environ.get('REDIS_PASSWORD')
 REDIS_KEY=os.environ.get('REDIS_KEY')
+REDIS_SSL=os.environ.get('REDIS_SSL')
 
 
 app = func.FunctionApp()
@@ -208,7 +209,7 @@ def products_trigger(styles: str) -> None:
     metadata = create_product_metadata(df[:DB_LIMIT])
     
     #setup Redis for product cache and VSS
-    redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, ssl=True, decode_responses=True)
+    redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD, ssl=REDIS_SSL, decode_responses=True)
     set_product_vectors(vector_dict, redis_client, df[:DB_LIMIT].to_dict(orient='index'))
     push_redis_data(redis_client, image_vectors, text_vectors, metadata)
 
