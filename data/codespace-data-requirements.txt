@@ -1,0 +1,6 @@
+pyodbc
+img2vec_pytorch
+redis
+pandas
+python-dotenv
+sentence_transformers
