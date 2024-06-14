@@ -1,5 +1,5 @@
 # In master
-CREATE LOGIN aiuser WITH PASSWORD = '#######';
+CREATE LOGIN aidemo WITH PASSWORD = '#######';
 GO
 
 
@@ -8,7 +8,7 @@ GO
 CREATE SCHEMA aidemo;
 GO
 
-CREATE USER [aidemo] FOR LOGIN [aiuser] WITH DEFAULT_SCHEMA=[dbo]
+CREATE USER [aidemo] FOR LOGIN [aidemo] WITH DEFAULT_SCHEMA=[dbo]
 GO
 ALTER AUTHORIZATION ON SCHEMA::[aidemo] TO [aidemo]
 GO
