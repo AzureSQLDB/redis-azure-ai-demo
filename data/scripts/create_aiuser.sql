@@ -25,3 +25,4 @@ grant CREATE TABLE to aidemo;
 grant CREATE VIEW to aidemo;
 grant CREATE FUNCTION to aidemo;
 grant CREATE PROCEDURE to aidemo;
+grant CREATE SCHEMA to aidemo;
