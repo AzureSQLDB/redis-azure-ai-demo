@@ -54,9 +54,10 @@ This [Jupyter notebook](./data/prep_data.ipynb) will create two json files with 
     REDIS_PORT=''
     REDIS_PASSWORD=''
     ```
-1. Create the application docker image by running
+1. Create the application docker image by running the following code in the terminal
 
     ```BASH
+    cd /workspaces/redis-azure-ai-demo/
     docker build -t product-search-app . --no-cache
     ```
 
@@ -68,7 +69,7 @@ This [Jupyter notebook](./data/prep_data.ipynb) will create two json files with 
     $ export REDIS_PASSOWRD=your-redis-password
     ```
 
-1. Run docker image by running
+1. Run the docker image by running the following code in the terminal
 
     ```BASH
     docker compose -f docker-cloud-redis.yml up
