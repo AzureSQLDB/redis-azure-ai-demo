@@ -18,10 +18,17 @@ We based this project from our [Product Search Demo](<https://github.com/redis-d
 
 ## Architecture
 
+### Load Data and Create Embeddings
+
+![A picture of the architecture of a SQL Database, Azure Function, and Redis Vector Database](./media/arch1.png)
+
+### Running the Application with Database Data Updates
+
+![A picture of the architecture of a SQL Database, Azure Function, and Redis Vector Database with an application running using these components](./media/arch2.png)
 
 ## Prerequisites
 
-- VS Code or Visual Studio
+- VS Code, Visual Studio, or run this in a codespace!
 - Python 3.8
 - OSX or Windows
 - Azure SQL
@@ -30,57 +37,58 @@ We based this project from our [Product Search Demo](<https://github.com/redis-d
 
 ## Running the Solution
 
-### Step 1 - Create data to load into Redis
+### Step 1 - Create a SQL Database and load the products data
 
-The Jupyter notebook will create two json files with the product metadata and the product vectors. These files will be placed in the data folder. The application will load these files to ACRE and create the indexes automatically when the docker container starts.
+In the first part of this demo solution, you will be loading a SQL database with the product information used for the application and for creating embeddings for the Redis vector database. The steps for this part of the demo solution can be found in this [README](./data/README.md)
 
-1. Run the Jupyter notebook located in data folder
+### Step 2 - Create the embeddings from the data in the database
 
-### Step 2 - Load Data to Azure SQL
-
-1. Run the create_aiuser.sql script located in the scripts folder
-2. Run the styles_table.sql script located in the scripts folder
-
-- This will also enable CDC on the database and the table
-
-3. Import the styles.csv data to the [aidemo].[styles] table using the import functionality of Azure Data Studio or through any other familiar options
+This [Jupyter notebook](./data/prep_data.ipynb) will create two json files with the product metadata and the product vectors. These files will be placed in the data folder. The application will load these files to ACRE and create the indexes automatically when the application docker container starts. You can run these steps by running the cells in this [Jupyter notebook](./data/prep_data.ipynb).
 
 ### Step 3 - Run the App
 
-1. Create docker image by running
+1. Fill in the Redis values in the .env file
 
-```sh
-docker build -t product-search-app . --no-cache
-```
+  ```BASH
+  REDIS_HOST=''
+  REDIS_PORT=''
+  REDIS_PASSWORD=''
+  ```
 
-2. Export Redis Endpoint Environment Variables:
+1. Create the application docker image by running
 
-```sh
+  ```BASH
+  docker build -t product-search-app . --no-cache
+  ```
+
+1. Export Redis Endpoint Environment Variables:
+
+  ```BASH
   $ export REDIS_HOST=your-redis-host
   $ export REDIS_PORT=your-redis-port
   $ export REDIS_PASSOWRD=your-redis-password
-```
+  ```
 
-3. Run docker image by running
+1. Run docker image by running
 
-```sh
-docker compose -f docker-cloud-redis.yml up
-```
+  ```BASH
+  docker compose -f docker-cloud-redis.yml up
+  ```
 
 
 ### Step 4 - Run the Azure Function
 
 1. Go to the sqlTrigger folder by running
 
-```sh
-cd sqlTrigger
-```
+  ```sh
+  cd sqlTrigger
+  ```
 
-2. Run the Azure Function
+1. Run the Azure Function
 
-```sh
-func start
-```
+  ```sh
+  func start
+  ```
 
 ### Datasets
 
