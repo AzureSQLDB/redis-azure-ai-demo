@@ -293,4 +293,27 @@ The following section will guide you through loading the styles.csv file into th
     DB_PASSWORD = ''
     ```
 
-1. The database is now ready to use used by the python notebook prep_data.ipynb to create embeddings to be loaded into the Redis vector database.
+1. The last step in this section is to install the [ODBC 18 Driver](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server). Use the existing terminal in codespace or create a new one and run the following code:
+
+    ```BASH
+    if ! [[ "18.04 20.04 22.04 23.04" == *"$(lsb_release -rs)"* ]];
+    then
+        echo "Ubuntu $(lsb_release -rs) is not currently supported.";
+        exit;
+    fi
+
+    curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+
+    curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+
+    sudo apt-get update
+    sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+    # optional: for bcp and sqlcmd
+    sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
+    echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+    source ~/.bashrc
+    # optional: for unixODBC development headers
+    sudo apt-get install -y unixodbc-dev
+    ```
+
+1. The database is now ready to use used by the python notebook prep_data.ipynb to create embeddings to be loaded into the Redis vector database. Please open the prep_data.ipynb and start stepping through the cells.

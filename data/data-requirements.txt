@@ -4,3 +4,5 @@ redis
 pandas
 python-dotenv
 sentence_transformers
+trange
+ipywidgets
