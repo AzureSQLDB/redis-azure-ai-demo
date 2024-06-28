@@ -74,6 +74,8 @@ This [Jupyter notebook](./data/prep_data.ipynb) will create two json files with 
     docker compose -f docker-cloud-redis.yml up
     ```
 
+1. When prompted, open the browser to the location of the running application.
+
 
 ### Step 4 - Run the Azure Function
 
@@ -91,6 +93,25 @@ This [Jupyter notebook](./data/prep_data.ipynb) will create two json files with 
     ```
 
 1. In the File Explorer, open the [README.md](./sqlTrigger/README.md) file in the sqlTrigger folder and follow the steps to start the Azure SQL Trigger Function.
+
+### Step 5 - Run the Azure Function
+
+1. Start by opening a new SQL editor window. Right click on the connection name in the connection navigator on the left side and choose **New Query**.
+
+    ![A picture of right clicking on the connection name in the connection navigator on the left side and choosing New Query](./media/data6.png)
+
+1. Copy and paste the following SQL statement
+
+    ```SQL
+    update [aidemo].[styles] set productDisplayName = 'Panther Male Ducati Track Night T-shirt'
+     where id = 1533
+    ```
+
+1. Click the green arrow to execute the SQL statement.
+
+1. You will see the trigger fire upon the database data update and the new embeddings will be loaded into the Redis vector database.
+
+1. Refresh the application where you can see the changed item and how the values relate to other products.
 
 ### Datasets
 

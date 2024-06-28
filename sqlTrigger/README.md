@@ -38,7 +38,7 @@ Run the following to prepare your environment for the trigger function
 Open the [local.settings.json](./local.settings.json) file and replace **SERVER_NAME**, **DB_NAME**, **USER**, **PASSWORD**, and change the **port number** if necessary.
 
 > [!IMPORTANT]  
-> Remember to use the aiuser and password for **USER** and **PASSWORD** in the [local.settings.json](./local.settings.json) file!
+> Remember to use the user aidemo and password for **USER** and **PASSWORD** in the [local.settings.json](./local.settings.json) file!
 
 
 ```JSON
@@ -54,7 +54,7 @@ Open the [local.settings.json](./local.settings.json) file and replace **SERVER_
 ```
 ### Start the Azure SQL Trigger Function
 
-1. Again, in the terminal, run the following to start the Azure SQL Trigger Function
+1. Again, in the terminal in the sqlTrigger directory, run the following to start the Azure SQL Trigger Function
 
     ```sh
     func host start
