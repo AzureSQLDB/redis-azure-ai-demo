@@ -256,7 +256,7 @@ The following section will guide you through loading the styles.csv file into th
 
 ### Prepare the .env file for the python notebook
 
-1. We need to see the connect string so that we can add this information to our .env file combined with our aiuser. Run the following command:
+1. We need to see the connect string so that we can add this information to our .env file combined with our aidemo user/login. Run the following command:
 
     ```BASH
     sqlcmd config connection-strings
@@ -286,7 +286,7 @@ The following section will guide you through loading the styles.csv file into th
     DB_NAME = ''
     ```
 
-1. Using the password you gave to aiuser, fill in the next values for DB_USERNAME (aiuser will be the value here) and DB_PASSWORD and save the .env file:
+1. Using the password you gave to aidemo, fill in the next values for DB_USERNAME (aidemo will be the value here) and DB_PASSWORD and save the .env file:
 
     ```BASH
     DB_USERNAME = ''
