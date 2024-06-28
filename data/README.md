@@ -286,7 +286,7 @@ The following section will guide you through loading the styles.csv file into th
     DB_NAME = ''
     ```
 
-1. Using the password you gave to aiuser, fill in the next values for DB_USERNAME and DB_PASSWORD and save the .env file:
+1. Using the password you gave to aiuser, fill in the next values for DB_USERNAME (aiuser will be the value here) and DB_PASSWORD and save the .env file:
 
     ```BASH
     DB_USERNAME = ''
