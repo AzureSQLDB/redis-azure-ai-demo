@@ -131,4 +131,32 @@ The following section will guide you through loading the styles.csv file into th
 
 ### Create the users and schema
 
-In the scripts directory in the data dire4ctory is the file create_ai
+1. In the scripts directory in the data directory is the file create_aidemo.sql. 
+
+    ![A picture of the create_aidemo.sql file](../media/data7.png)
+
+    Click on this file to bring it up in the code editor.
+
+1. To start, change the password of the aidemo login from ####### to a complex, secure password.
+
+    ```SQL
+    CREATE LOGIN aidemo WITH PASSWORD = '#######';
+    ```
+
+1. Once the password is changed, highlight the following SQL and click the green run button to execute it.
+
+    ```SQL
+    USE [master]
+    GO
+
+    CREATE LOGIN aidemo WITH PASSWORD = '#######';
+    GO
+    ```
+
+    ![A picture of clicking the green run button to execute sql](../media/data8.png)
+
+    ***REMEMBER TO CHANGE THE PASSWORD TO A COMPLEX, SECURE PASSWORD BEFORE RUNNING THIS SQL!**
+
+1. Upon clicking the run button, a dialog box will appear asking which SQL connection you want to use. Select our RedisAiDb connection.
+
+    ![A picture of selecting the RedisAiDb connection profile](../media/data9.png)
