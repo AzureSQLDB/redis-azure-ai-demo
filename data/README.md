@@ -294,7 +294,8 @@ The following section will guide you through loading the styles.csv file into th
     ```
 
 1. The last step in this section is to install the [ODBC 18 Driver](https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server). Use the existing terminal in codespace or create a new one and run the following code:
-(A script containg this code is also found in the repository here: [the odbcDriverInstallUbuntu.txt file](../sqlTrigger/odbcDriverInstallUbuntu.txt))
+
+    (A script containg this code is also found in the repository here: [odbcDriverInstallUbuntu.txt](../sqlTrigger/odbcDriverInstallUbuntu.txt))
 
     ```BASH
     if ! [[ "18.04 20.04 22.04 23.04" == *"$(lsb_release -rs)"* ]];
