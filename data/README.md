@@ -65,36 +65,10 @@ then, run the following commands to create the database:
 sqlcmd create mssql -u RedisAiDb --accept-eula
 ```
 
-Next, we need to see the connect string so that we can add this information to our .env file. Run the following command:
+Next, we need to see the connect string information so that we can connect to the database in the next section. Run the following command:
 
 ```BASH
 sqlcmd config connection-strings
-```
-
-Copy the template.env file and rename it to just **.env**.
-
-Looking at the file, you see the following:
-
-```BASH
-DB_SERVER = ''
-DB_NAME = ''
-DB_USERNAME = ''
-DB_PASSWORD = ''
-DB_LIMIT=100
-REDIS_HOST=''
-REDIS_PORT=''
-REDIS_PASSWORD=''
-REDIS_KEY=':vecsim_app.models.Product:index'
-REDIS_SSL=False
-```
-
-Using the information from the connect strings, fill in the values for the following and save the .env file:
-
-```BASH
-DB_SERVER = ''
-DB_NAME = ''
-DB_USERNAME = ''
-DB_PASSWORD = ''
 ```
 
 ## Loading the Data
@@ -124,10 +98,6 @@ The following section will guide you through loading the styles.csv file into th
 1. The next dialog box asks you to **name the connection profile**. Name it **RedisAiDb** and press enter/return.
 
    ![A picture of a naming the connection profile freeDB](../media/data5.png)
-
-1. Once connected to the database, right click on the connection name in the connection navigator on the left side and choose **New Query**.
-
-    ![A picture of right clicking on the connection name in the connection navigator on the left side and choosing New Query](../media/data6.png)
 
 ### Create the users and schema
 
@@ -160,3 +130,167 @@ The following section will guide you through loading the styles.csv file into th
 1. Upon clicking the run button, a dialog box will appear asking which SQL connection you want to use. Select our RedisAiDb connection.
 
     ![A picture of selecting the RedisAiDb connection profile](../media/data9.png)
+
+1. Highlight the next section and again use the green arrow to run this SQL.
+
+    ```SQL
+    USE [RedisAiDb]
+    GO
+
+    CREATE SCHEMA aidemo;
+    GO
+
+    CREATE USER [aidemo] FOR LOGIN [aidemo] WITH DEFAULT_SCHEMA=[dbo]
+    GO
+    ALTER AUTHORIZATION ON SCHEMA::[aidemo] TO [aidemo]
+    GO
+    USE [RedisAiDb]
+    GO
+    EXEC sp_addrolemember N'db_datareader', N'aidemo'
+    GO
+    USE [RedisAiDb]
+    GO
+    EXEC sp_addrolemember N'db_datawriter', N'aidemo'
+    GO
+
+    grant CREATE TABLE to aidemo;
+    grant CREATE VIEW to aidemo;
+    grant CREATE FUNCTION to aidemo;
+    grant CREATE PROCEDURE to aidemo;
+    grant CREATE SCHEMA to aidemo;
+    ```
+
+### Create the table and load the data
+
+1. Next, we need to create the table that will hold the data from the styles.csv file. Using the File Explorer, find the styles_table.sql file in the data/scripts directory.     
+
+    ![A picture of the styles_table.sql file](../media/data10.png)
+
+    Click on this file to bring it up in the code editor.
+
+1. Highlight the following SQL and click the green run button to execute it. You may need to again choose a database profile as we did when running code from the create_aidemo.sql script.
+
+    ```SQL
+    create table [aidemo].[styles] (
+    id              int NOT NULL PRIMARY KEY CLUSTERED,
+    gender          nvarchar(50) NOT NULL,
+    masterCategory  nvarchar(100) NOT NULL,
+    subCategory     nvarchar(100) NOT NULL,
+    articleType     nvarchar(100) NOT NULL,
+    baseColour      nvarchar(50) NOT NULL,
+    season          nvarchar(50) NOT NULL,
+    year            int,
+    usage           nvarchar(100) NOT NULL,
+    productDisplayName  nvarchar(2000) NOT NULL
+    )
+    ```
+
+1. Right click on the connection name in the connection navigator on the left side and choose **New Query**.
+
+    ![A picture of right clicking on the connection name in the connection navigator on the left side and choosing New Query](../media/data6.png)
+
+1. With the new query window in the code editor, copy and paste the following SQL but do not run it yet.
+
+    ```SQL
+    BULK INSERT [aidemo].[styles]
+        FROM '/styles.csv'
+        WITH
+        (
+        FIRSTROW = 2,
+        FIELDTERMINATOR = ',',  --CSV field delimiter
+        ROWTERMINATOR = '\n',   --Use to shift the control to next row
+        TABLOCK
+        )
+    ```
+
+    This SQL will load a file from the file system directly into our styles database table. But first, we need to copy this file into the docker container or if you are using an Azure SQL Database, to a container that the database can read from.
+
+1. Using the terminal in codespace, issue the following command:
+
+    ```BASH
+    cd /workspaces/redis-azure-ai-demo/data/scripts
+    ```
+
+1. Now, we need to file the name of our docker container. Issue the following command:
+
+    ```BASH
+    docker ps
+    ```
+
+    You will see output similar to the following:
+
+    ```BASH
+    CONTAINER ID   IMAGE                                   COMMAND                  CREATED          STATUS          PORTS                    NAMES
+    9b6daee8a91e   mcr.microsoft.com/mssql/server:latest   "/opt/mssql/bin/perm…"   39 minutes ago   Up 39 minutes   0.0.0.0:1433->1433/tcp   vigilant_cray
+    ```
+
+    The data we want is in the **NAMES** column. Here my container is named "vigilant_cray". 
+
+1. With the docker container name, run the following command. Remember, you docker container name will be different and you will need to replace DOCKER_CONTAINER_NAME with your container's name.
+
+    ```BASH
+    docker cp styles.csv DOCKER_CONTAINER_NAME:/.
+    ```
+
+    If the file copied into the container, you will see a message similar to the following:
+
+    ```BASH
+    Successfully copied 4.33MB to vigilant_cray:/.
+    ```
+
+1. Now, back in the code editor, the SQL command we copy and pasted, hight the SQL code and click the green run button.
+
+    If the command was successful, you will see output similar to the following:
+
+    ```SQL
+    Started executing query at Line 1
+	(44446 rows affected) 
+	Total execution time: 00:00:00.715
+    ```
+
+1. To see the rows in the table, you can run the following SQL:
+
+    ```SQL
+    select * from [aidemo].[styles];
+    ```
+
+### Prepare the .env file for the python notebook
+
+1. We need to see the connect string so that we can add this information to our .env file combined with our aiuser. Run the following command:
+
+    ```BASH
+    sqlcmd config connection-strings
+    ```
+
+1. Next, in the codespace file explorer, copy the template.env file and rename it to **.env**.
+
+1. Looking at the file, you see the following:
+
+    ```BASH
+    DB_SERVER = ''
+    DB_NAME = ''
+    DB_USERNAME = ''
+    DB_PASSWORD = ''
+    DB_LIMIT=100
+    REDIS_HOST=''
+    REDIS_PORT=''
+    REDIS_PASSWORD=''
+    REDIS_KEY=':vecsim_app.models.Product:index'
+    REDIS_SSL=False
+    ```
+
+1. Using the information from the connect strings, fill in the values for DB_SERVER and DB_NAME and save the .env file:
+
+    ```BASH
+    DB_SERVER = ''
+    DB_NAME = ''
+    ```
+
+1. Using the password you gave to aiuser, fill in the next values for DB_USERNAME and DB_PASSWORD and save the .env file:
+
+    ```BASH
+    DB_USERNAME = ''
+    DB_PASSWORD = ''
+    ```
+
+1. The database is now ready to use used by the python notebook prep_data.ipynb to create embeddings to be loaded into the Redis vector database.
