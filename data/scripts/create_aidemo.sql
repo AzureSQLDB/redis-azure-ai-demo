@@ -1,9 +1,14 @@
 # In master
+USE [master]
+GO
+
 CREATE LOGIN aidemo WITH PASSWORD = '#######';
 GO
 
 
 # In DEMO DB
+USE [RedisAiDb]
+GO
 
 CREATE SCHEMA aidemo;
 GO

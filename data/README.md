@@ -128,3 +128,7 @@ The following section will guide you through loading the styles.csv file into th
 1. Once connected to the database, right click on the connection name in the connection navigator on the left side and choose **New Query**.
 
     ![A picture of right clicking on the connection name in the connection navigator on the left side and choosing New Query](../media/data6.png)
+
+### Create the users and schema
+
+In the scripts directory in the data dire4ctory is the file create_ai
