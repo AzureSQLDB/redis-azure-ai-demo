@@ -37,6 +37,8 @@ Run the following to prepare your environment for the trigger function
 
 Open the [local.settings.json](./local.settings.json) file and replace **SERVER_NAME**, **DB_NAME**, **USER**, **PASSWORD**, and change the **port number** if necessary.
 
+![A picture of the local.settings.json file location in the file explorer in codespace](../media/trig1.png)
+
 > [!IMPORTANT]  
 > Remember to use the user aidemo and password for **USER** and **PASSWORD** in the [local.settings.json](./local.settings.json) file!
 
