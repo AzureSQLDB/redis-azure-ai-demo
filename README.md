@@ -49,46 +49,48 @@ This [Jupyter notebook](./data/prep_data.ipynb) will create two json files with 
 
 1. Fill in the Redis values in the .env file
 
-  ```BASH
-  REDIS_HOST=''
-  REDIS_PORT=''
-  REDIS_PASSWORD=''
-  ```
-
+    ```BASH
+    REDIS_HOST=''
+    REDIS_PORT=''
+    REDIS_PASSWORD=''
+    ```
 1. Create the application docker image by running
 
-  ```BASH
-  docker build -t product-search-app . --no-cache
-  ```
+    ```BASH
+    docker build -t product-search-app . --no-cache
+    ```
 
 1. Export Redis Endpoint Environment Variables:
 
-  ```BASH
-  $ export REDIS_HOST=your-redis-host
-  $ export REDIS_PORT=your-redis-port
-  $ export REDIS_PASSOWRD=your-redis-password
-  ```
+    ```BASH
+    $ export REDIS_HOST=your-redis-host
+    $ export REDIS_PORT=your-redis-port
+    $ export REDIS_PASSOWRD=your-redis-password
+    ```
 
 1. Run docker image by running
 
-  ```BASH
-  docker compose -f docker-cloud-redis.yml up
-  ```
+    ```BASH
+    docker compose -f docker-cloud-redis.yml up
+    ```
 
 
 ### Step 4 - Run the Azure Function
 
-1. Go to the sqlTrigger folder by running
+1. Start by opening the styles_table.sql file located in the data/scripts directory
 
-  ```sh
-  cd sqlTrigger
-  ```
+1. Highlight and run the following code to enable Change Tracking in the database and on the styles table. Click the green arrow to execute the SQL commands:
 
-1. Run the Azure Function
+    ```SQL
+    ALTER DATABASE CURRENT
+    SET CHANGE_TRACKING = ON
+    (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);
 
-  ```sh
-  func start
-  ```
+    ALTER TABLE [aidemo].[styles]
+    ENABLE CHANGE_TRACKING;
+    ```
+
+1. In the File Explorer, open the [README.md](./sqlTrigger/README.md) file in the sqlTrigger folder and follow the steps to start the Azure SQL Trigger Function.
 
 ### Datasets
 

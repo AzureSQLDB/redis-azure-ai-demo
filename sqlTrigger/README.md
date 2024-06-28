@@ -12,28 +12,34 @@ Run the following to prepare your environment for the trigger function
 - Jupyter (ms-toolsai.jupyter)
 
 ### Install the python libraries
-```BASH
-pip install -r requirements.txt
-```
+
+1. Go to the sqlTrigger folder by running the following in the terminal:
+
+    ```sh
+    cd /workspaces/redis-azure-ai-demo/sqlTrigger
+    ```
+
+1. Run the following code in the terminal
+
+    ```BASH
+    pip install -r requirements.txt
+    ```
 
 ### Install functions core tools
-```BASH
-npm install -g azure-functions-core-tools@4
-```
 
-### Update the environments file (.env)
-You can use the template.env as a template. Copy and rename the file to .env and fill out the following entries for the Azure Cache for Redis:
+1. Again, in the terminal, same sqlTrigger directory, run the following to install Azure Functions Core
 
-```BASH
-DB_LIMIT=100
-REDIS_HOST=''
-REDIS_PORT=''
-REDIS_PASSWORD=''
-REDIS_KEY=''
-```
+    ```BASH
+    npm install -g azure-functions-core-tools@4
+    ```
 
 ### Update the local.settings.json file with the database connection information
-Replace **SERVER_NAME**, **DB_NAME**, **USER**, **PASSWORD**, and change the **port number** if necessary.
+
+Open the [local.settings.json](./local.settings.json) file and replace **SERVER_NAME**, **DB_NAME**, **USER**, **PASSWORD**, and change the **port number** if necessary.
+
+> [!IMPORTANT]  
+> Remember to use the aiuser and password for **USER** and **PASSWORD** in the [local.settings.json](./local.settings.json) file!
+
 
 ```JSON
 {
@@ -46,4 +52,10 @@ Replace **SERVER_NAME**, **DB_NAME**, **USER**, **PASSWORD**, and change the **p
   }
 }
 ```
+### Start the Azure SQL Trigger Function
 
+1. Again, in the terminal, run the following to start the Azure SQL Trigger Function
+
+    ```sh
+    func host start
+    ```
